@@ -85,19 +85,35 @@ onUnmounted(() => {
   z-index: 100;
   padding: 1rem 0;
   transition: all var(--transition-normal);
-  background: rgba(9, 23, 201, 0.45);
-  backdrop-filter: blur(12px);
-  border-bottom: 2px solid #0B1BC6;
-  box-shadow: 0 4px 12px rgba(11, 27, 198, 0.35);
+  background: #0A1AC5;
+  border-bottom: 2px solid #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   image-rendering: pixelated;
 }
 
 .navbar-wrapper.scrolled {
   padding: 0.75rem 0;
-  background: rgba(8, 9, 13, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(16px);
-  border-bottom: 2px solid #0B1BC6;
-  box-shadow: 0 6px 16px rgba(11, 27, 198, 0.4);
+  border-bottom: 2px solid #000000;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.navbar-wrapper.scrolled .pixel-nav-link {
+  color: #000000;
+}
+
+.navbar-wrapper.scrolled .pixel-mobile-toggle {
+  border-color: #000000;
+}
+
+.navbar-wrapper.scrolled .pixel-mobile-toggle .bar {
+  background: #000000;
+}
+
+.navbar-wrapper.scrolled .pixel-logo {
+  border-color: #000000;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .navbar-content {

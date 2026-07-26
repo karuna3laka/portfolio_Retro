@@ -4,94 +4,234 @@
     <div class="activity-top-bar">
       <div class="activity-title-group">
         <h2 class="activity-title">Activity</h2>
-        <span class="internship-badge">Software Engineering Internship (Jul 2023 – Jul 2024)</span>
+        <span class="internship-badge">[Intern] Full Stack Developer</span>
       </div>
-      <a href="https://github.com" target="_blank" class="activity-view-all">View all</a>
+      <a href="https://github.com" target="_blank" class="activity-view-all">[View all]</a>
     </div>
 
-    <!-- Main GitLab Heatmap Card -->
-    <div class="gitlab-card">
-      
-      <!-- Month Labels Bar (Accurately Positioned over Exact Week Columns) -->
-      <div class="months-bar">
-        <span class="day-spacer"></span>
-        <div class="months-labels-grid">
-          <span 
-            v-for="(m, i) in monthHeaderConfig" 
-            :key="i" 
-            class="month-item"
-            :style="{ gridColumnStart: m.col }"
+    <!-- Surrounding Layout Container (3 Top, 3 Bottom with staggered heights & dotted connectors) -->
+    <div class="surround-layout-container">
+
+      <!-- TOP CARDS ROW (3) -->
+      <div class="callouts-row top-row">
+        
+        <!-- 1: saasbeds (Staggered lowest) -->
+        <div class="callout-wrapper" style="padding-top: 60px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'saasbeds' }"
+            @mouseenter="activeProject = 'saasbeds'"
+            @mouseleave="activeProject = null"
           >
-            {{ m.name }}
-          </span>
+            <div class="callout-chip chip-blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="0"/><rect x="9" y="9" width="6" height="6"/>
+              </svg>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">saasbeds</div>
+              <div class="callout-project-sub">Weblook International • 348 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+
+        <!-- 2: bewaxed (Staggered highest) -->
+        <div class="callout-wrapper" style="padding-top: 0px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'bewaxed' }"
+            @mouseenter="activeProject = 'bewaxed'"
+            @mouseleave="activeProject = null"
+          >
+            <div class="callout-chip chip-white">
+              <span class="chip-sparkle">✦</span>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">bewaxed</div>
+              <div class="callout-project-sub">Weblook International • 215 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+
+        <!-- 3: marketplace (Staggered middle) -->
+        <div class="callout-wrapper" style="padding-top: 30px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'marketplace' }"
+            @mouseenter="activeProject = 'marketplace'"
+            @mouseleave="activeProject = null"
+          >
+            <div class="callout-chip chip-blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              </svg>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">marketplace</div>
+              <div class="callout-project-sub">Shavinka Nilesh • 184 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
         </div>
       </div>
 
-      <!-- Matrix Body -->
-      <div class="matrix-container">
-        <!-- Day Labels (M, W, F) -->
-        <div class="day-labels-col">
-          <span class="day-code"></span>
-          <span class="day-code">M</span>
-          <span class="day-code"></span>
-          <span class="day-code">W</span>
-          <span class="day-code"></span>
-          <span class="day-code">F</span>
-          <span class="day-code"></span>
-        </div>
-
-        <!-- Heatmap Grid (53 Weeks x 7 Days = 371 Days) -->
-        <div class="weeks-grid">
-          <div v-for="(week, wIdx) in heatmapWeeks" :key="wIdx" class="week-column">
-            <div 
-              v-for="(cell, dIdx) in week" 
-              :key="dIdx" 
-              class="heat-cell"
-              :class="['level-' + cell.level, { 'highlighted-box': cell.highlighted }]"
-              :title="`${cell.formattedDate}: ${cell.count} contributions ${cell.meta ? '(' + cell.meta + ')' : ''}`"
-            ></div>
+      <!-- MAIN GITLAB HEATMAP CARD -->
+      <div class="gitlab-card">
+        <!-- Month Labels Bar (Accurately Positioned over Exact Week Columns) -->
+        <div class="months-bar">
+          <span class="day-spacer"></span>
+          <div class="months-labels-grid">
+            <span 
+              v-for="(m, i) in monthHeaderConfig" 
+              :key="i" 
+              class="month-item"
+              :class="{ 'month-highlight': activeProject === 'saasbeds' && (m.name === 'Sep' || m.name === 'Oct' || m.name === 'Nov') }"
+              :style="{ gridColumnStart: m.col }"
+            >
+              {{ m.name }}
+            </span>
           </div>
         </div>
-      </div>
 
-      <!-- Bottom Footer Info -->
-      <div class="gitlab-footer">
-        <div class="legend-box">
-          <div class="heat-cell level-0"></div>
-          <div class="heat-cell level-1"></div>
-          <div class="heat-cell level-2"></div>
-          <div class="heat-cell level-3"></div>
-          <div class="heat-cell level-4"></div>
+        <!-- Matrix Body -->
+        <div class="matrix-container">
+          <!-- Day Labels (M, W, F) -->
+          <div class="day-labels-col">
+            <span class="day-code"></span>
+            <span class="day-code">M</span>
+            <span class="day-code"></span>
+            <span class="day-code">W</span>
+            <span class="day-code"></span>
+            <span class="day-code">F</span>
+            <span class="day-code"></span>
+          </div>
+
+          <!-- Heatmap Grid (53 Weeks x 7 Days = 371 Days) -->
+          <div class="weeks-grid">
+            <div v-for="(week, wIdx) in heatmapWeeks" :key="wIdx" class="week-column">
+              <div
+                v-for="(cell, dIndex) in week"
+                :key="dIndex"
+                class="heat-cell"
+                :class="[
+                  `level-${cell.level}`,
+                  { 
+                    'highlighted-box': cell.highlighted,
+                    'project-highlight-active': activeProject === cell.project
+                  }
+                ]"
+                :title="`${cell.formattedDate}: ${cell.count} contributions (${cell.meta})`"
+              ></div>
+            </div>
+          </div>
         </div>
-        <span class="footer-caption">Issues, merge requests, pushes, and comments.</span>
+
+        <!-- Bottom Footer Info -->
+        <div class="gitlab-footer">
+          <div class="legend-box">
+            <div class="heat-cell level-0"></div>
+            <div class="heat-cell level-1"></div>
+            <div class="heat-cell level-2"></div>
+            <div class="heat-cell level-3"></div>
+            <div class="heat-cell level-4"></div>
+          </div>
+          <span class="footer-caption">Issues, merge requests, pushes, and comments.</span>
+        </div>
       </div>
 
+      <!-- BOTTOM CARDS ROW (3) -->
+      <div class="callouts-row bottom-row">
+        
+        <!-- 4: saptify (Staggered highest) -->
+        <div class="callout-wrapper" style="padding-bottom: 60px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'appointment' }"
+            @mouseenter="activeProject = 'appointment'"
+            @mouseleave="activeProject = null"
+          >
+            <div class="callout-chip chip-blue">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="0"/><path d="M16 2v4M8 2v4M3 10h18"/>
+              </svg>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">saptify</div>
+              <div class="callout-project-sub">Weblook International • 260 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+
+        <!-- 5: autosale.lk (Staggered middle) -->
+        <div class="callout-wrapper" style="padding-bottom: 20px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'veyogo' }"
+            @mouseenter="activeProject = 'veyogo'"
+            @mouseleave="activeProject = null"
+          >
+            <div class="callout-chip chip-white">
+              <span class="chip-sparkle">⚡</span>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">autosale.lk</div>
+              <div class="callout-project-sub">Oshada Viduranga • 290 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+
+        <!-- 6: HouseofSincerity (Staggered lowest) -->
+        <div class="callout-wrapper" style="padding-bottom: 0px;">
+          <div
+            class="project-callout-card"
+            :class="{ 'active-highlight': activeProject === 'houseofsincerity' }"
+            @mouseenter="activeProject = 'houseofsincerity'"
+            @mouseleave="activeProject = null"
+          >
+            <div class="callout-chip chip-white">
+              <span class="chip-sparkle">✦</span>
+            </div>
+            <div class="callout-info">
+              <div class="callout-project-title">HouseofSincerity</div>
+              <div class="callout-project-sub">Oshada Viduranga • 142 commits</div>
+            </div>
+          </div>
+          <div class="dashed-line"></div>
+        </div>
+
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 
-// Exact Month start column offsets (1-indexed CSS grid columns) matching Jul 2023 - Jul 2024
+const activeProject = ref(null);
+
+// Exact Month start column offsets matching Sep 2025 - Sep 2026
 const monthHeaderConfig = [
-  { name: 'Jul', col: 1 },
-  { name: 'Aug', col: 4 },
-  { name: 'Sep', col: 8 },
-  { name: 'Oct', col: 12 },
-  { name: 'Nov', col: 17 },
-  { name: 'Dec', col: 21 },
-  { name: 'Jan', col: 25 },
-  { name: 'Feb', col: 30 },
-  { name: 'Mar', col: 34 },
-  { name: 'Apr', col: 38 },
-  { name: 'May', col: 43 },
-  { name: 'Jun', col: 47 },
-  { name: 'Jul', col: 51 }
+  { name: 'Sep', col: 1 },
+  { name: 'Oct', col: 5 },
+  { name: 'Nov', col: 9 },
+  { name: 'Dec', col: 14 },
+  { name: 'Jan', col: 18 },
+  { name: 'Feb', col: 23 },
+  { name: 'Mar', col: 27 },
+  { name: 'Apr', col: 31 },
+  { name: 'May', col: 36 },
+  { name: 'Jun', col: 40 },
+  { name: 'Jul', col: 44 },
+  { name: 'Aug', col: 49 },
+  { name: 'Sep', col: 53 }
 ];
 
-// Accurate date generator for the Internship Period: July 16, 2023 to July 21, 2024
-const startDate = new Date(2023, 6, 16); // Jul 16, 2023
+// Accurate date generator for the Internship Period: Sep 1, 2025 to Sep 2026
+const startDate = new Date(2025, 8, 1); // Sep 1, 2025
 
 const heatmapWeeks = computed(() => {
   const weeks = [];
@@ -111,44 +251,61 @@ const heatmapWeeks = computed(() => {
       let count = 0;
       let highlighted = false;
       let meta = '';
+      let project = null;
 
-      // Internship Timeline Activity Mapping
-      if (w < 7) {
-        // Jul - Aug 2023: Onboarding & Orientation
-        if (w === 6 && d === 2) {
-          level = 2;
-          count = 4;
-          meta = 'Internship Onboarding & Setup';
-        }
-      } else if (w >= 7 && w < 11) {
-        // Sep 2023: Architecture & Initial Pull Requests
+      // Project 1: saasbeds (Weeks 0 to 8)
+      if (w >= 0 && w <= 8) {
+        project = 'saasbeds';
         if (d >= 1 && d <= 5) {
-          level = (w === 9 && d === 2) ? 3 : Math.random() > 0.4 ? 2 : 1;
-          count = level * 3;
-          meta = 'Vue 3 Feature Migration';
-        }
-        if (w === 9 && d === 2) {
-          highlighted = true;
-          meta = 'PR #104 Merged to Staging';
-        }
-      } else if (w >= 11 && w < 24) {
-        // Oct - Dec 2023: Heavy Component Development
-        if (d >= 1 && d <= 5) {
-          level = Math.random() > 0.65 ? 2 : 1;
+          level = (w === 4 && d === 2) ? 4 : Math.random() > 0.35 ? 3 : 2;
           count = level * 4;
-          meta = 'Sprint Deliverables & API Integration';
+          meta = 'saasbeds • Weblook International';
         }
-      } else {
-        // Jan - Jul 2024: Full Production Development & Code Reviews
+      } 
+      // Project 2: bewaxed (Weeks 9 to 17)
+      else if (w >= 9 && w <= 17) {
+        project = 'bewaxed';
+        if (d >= 1 && d <= 5) {
+          level = Math.random() > 0.4 ? 3 : 2;
+          count = level * 4;
+          meta = 'bewaxed • Weblook International';
+        }
+      } 
+      // Project 3: marketplace (Weeks 18 to 26)
+      else if (w >= 18 && w <= 26) {
+        project = 'marketplace';
+        if (d >= 1 && d <= 5) {
+          level = Math.random() > 0.35 ? 4 : 3;
+          count = level * 5;
+          meta = 'marketplace • Shavinka Nilesh';
+        }
+      }
+      // Project 4: saptify (Weeks 27 to 35)
+      else if (w >= 27 && w <= 35) {
+        project = 'appointment';
+        if (d >= 1 && d <= 5) {
+          level = Math.random() > 0.3 ? 3 : 2;
+          count = level * 4;
+          meta = 'saptify • Weblook International';
+        }
+      }
+      // Project 5: autosale.lk (Weeks 36 to 44)
+      else if (w >= 36 && w <= 44) {
+        project = 'veyogo';
         if (d >= 1 && d <= 5) {
           const r = Math.random();
-          level = r > 0.85 ? 4 : r > 0.5 ? 3 : r > 0.2 ? 2 : 1;
+          level = r > 0.8 ? 4 : r > 0.35 ? 3 : 2;
+          count = level * 5;
+          meta = 'autosale.lk • Oshada Viduranga';
+        }
+      }
+      // Project 6: HouseofSincerity (Weeks 45 to 52)
+      else if (w >= 45) {
+        project = 'houseofsincerity';
+        if (d >= 1 && d <= 5) {
+          level = Math.random() > 0.4 ? 4 : 2;
           count = level * 4;
-          meta = 'Core System Refactoring & Code Reviews';
-        } else if (Math.random() > 0.5) {
-          level = 1;
-          count = 2;
-          meta = 'Documentation & Unit Testing';
+          meta = 'HouseofSincerity • Oshada Viduranga';
         }
       }
 
@@ -157,10 +314,10 @@ const heatmapWeeks = computed(() => {
         count,
         formattedDate,
         meta,
+        project,
         highlighted
       });
 
-      // Move to next day
       currDate.setDate(currDate.getDate() + 1);
     }
     weeks.push(days);
@@ -176,6 +333,7 @@ const heatmapWeeks = computed(() => {
   font-family: var(--font-mono);
   color: #ffffff;
   image-rendering: pixelated;
+  position: relative;
 }
 
 /* Outer Header Outside Card */
@@ -183,7 +341,7 @@ const heatmapWeeks = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
   padding: 0 0.2rem;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -209,15 +367,15 @@ const heatmapWeeks = computed(() => {
   border: 1px solid #ffffff;
   padding: 0.2rem 0.6rem;
   border-radius: 0px; /* Sharp 0px direct line */
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: 0.02em;
 }
 
 .activity-view-all {
-  color: #00e5ff;
+  color: #ffffff;
   font-size: 0.85rem;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 400;
   transition: opacity 0.15s ease, text-decoration 0.15s ease;
 }
 
@@ -226,10 +384,127 @@ const heatmapWeeks = computed(() => {
   opacity: 0.9;
 }
 
-/* Main GitLab Dark Card (Black, Blue, and White Sharp Direct Line Theme) */
-.gitlab-card {
+/* Surrounding Layout Container */
+.surround-layout-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.callouts-row {
+  display: flex;
+  gap: 1.25rem;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.callouts-row.top-row {
+  align-items: flex-end;
+  height: 140px;
+  margin-bottom: -15px; /* Pull closer to heatmap */
+}
+
+.callouts-row.bottom-row {
+  align-items: flex-start;
+  height: 140px;
+  margin-top: -5px;
+}
+
+.callout-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.bottom-row .callout-wrapper {
+  flex-direction: column-reverse;
+}
+
+.dashed-line {
+  flex-grow: 1;
+  width: 0;
+  border-left: 2px dashed rgba(255, 255, 255, 0.6);
+}
+
+.top-row .dashed-line {
+  margin-top: 8px;
+}
+
+.bottom-row .dashed-line {
+  margin-bottom: 8px;
+}
+
+.project-callout-card {
+  position: relative;
+  z-index: 10;
   background: #000000;
-  border: 2px solid #0B1BC6;
+  border: 2px solid #ffffff;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #0B1BC6;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.project-callout-card:hover,
+.project-callout-card.active-highlight {
+  border-color: #00e5ff;
+  background: #040c5a;
+  box-shadow: 4px 4px 0px #00e5ff;
+  transform: translateY(-2px);
+}
+
+.callout-chip {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0px;
+  flex-shrink: 0;
+}
+
+.callout-chip.chip-blue {
+  background: #0B1BC6;
+  color: #00e5ff;
+  border: 1px solid #00e5ff;
+}
+
+.callout-chip.chip-white {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  font-weight: 400;
+}
+
+.callout-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.callout-project-title {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+.callout-project-sub {
+  font-size: 0.7rem;
+  color: #93c5fd;
+  margin-top: 1px;
+}
+
+/* Main GitLab Card (Muted Off-White Background, Black & Blue Sharp Retro Theme) */
+.gitlab-card {
+  background: #e8ecf2; /* Reduced luminosity off-white */
+  border: 2px solid #000000;
   border-radius: 0px; /* Sharp 0px direct line corners */
   padding: 1.25rem 1.5rem;
   box-shadow: 4px 4px 0px #000000;
@@ -256,9 +531,16 @@ const heatmapWeeks = computed(() => {
 
 .month-item {
   font-size: 0.72rem;
-  color: #93c5fd;
-  font-weight: 600;
+  color: #000000;
+  font-weight: 500;
   white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.month-item.month-highlight {
+  color: #0B1BC6;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 /* Matrix Body */
@@ -277,11 +559,11 @@ const heatmapWeeks = computed(() => {
 
 .day-code {
   font-size: 0.7rem;
-  color: #93c5fd;
+  color: #000000;
   height: 12px;
   line-height: 12px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .weeks-grid {
@@ -307,39 +589,42 @@ const heatmapWeeks = computed(() => {
 }
 
 .heat-cell:hover {
-  outline: 1px solid #ffffff;
+  outline: 2px solid #000000;
   outline-offset: 1px;
   z-index: 10;
 }
 
 .highlighted-box {
-  outline: 1px solid #ffffff;
+  outline: 2px solid #000000;
   outline-offset: 1px;
 }
 
-/* Black, Blue, and White Heatmap Variants */
+.project-highlight-active {
+  outline: 2px solid #0B1BC6;
+  outline-offset: 1px;
+  z-index: 5;
+}
+
+/* White Card Heatmap Cell Levels */
 .level-0 {
-  background: #090c1a;
-  border: 1px solid rgba(11, 27, 198, 0.25);
+  background: #c5d1e0; /* Muted slate gray for inactive days */
+  border: 1px solid #a0b2ce;
 }
 
 .level-1 {
-  background: #0B1BC6; /* Project Deep Blue */
+  background: #93c5fd; /* Soft Blue */
 }
 
 .level-2 {
   background: #2563eb; /* Royal Blue */
-  box-shadow: 0 0 3px rgba(37, 99, 235, 0.5);
 }
 
 .level-3 {
-  background: #00e5ff; /* Electric Cyan Blue */
-  box-shadow: 0 0 5px rgba(0, 229, 255, 0.7);
+  background: #0B1BC6; /* Deep Electric Blue */
 }
 
 .level-4 {
-  background: #ffffff; /* Crisp White */
-  box-shadow: 0 0 7px #ffffff;
+  background: #000000; /* Sharp Black */
 }
 
 /* Footer Info Row */
@@ -359,6 +644,7 @@ const heatmapWeeks = computed(() => {
 
 .footer-caption {
   font-size: 0.78rem;
-  color: #93c5fd;
+  color: #000000;
+  font-weight: 400;
 }
 </style>

@@ -4,7 +4,7 @@
 
 :root {
   /* Color Palette */
-  --bg-dark: #08090d;
+  --bg-dark: #0A1AC5;
   --bg-surface: #0e1017;
   --bg-surface-elevated: #151824;
   --bg-surface-hover: #1c2030;
@@ -52,7 +52,7 @@ html {
 }
 
 body {
-  background-color: var(--bg-dark);
+  background: #0A1AC5;
   color: var(--text-primary);
   font-family: var(--font-mono);
   line-height: 1.6;
@@ -60,12 +60,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeSpeed;
-  background-image: 
-    radial-gradient(circle at 50% 0%, rgba(0, 229, 255, 0.05) 0%, transparent 60%),
-    radial-gradient(circle at 80% 40%, rgba(139, 92, 246, 0.04) 0%, transparent 50%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
 }
 
 /* GPU Hardware Acceleration for Fast 60fps Scrolling */
