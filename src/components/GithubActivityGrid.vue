@@ -440,8 +440,8 @@ const heatmapWeeks = computed(() => {
 .project-callout-card {
   position: relative;
   z-index: 10;
-  background: #000000;
-  border: 2px solid #ffffff;
+  background: #ffffff;
+  border: 1px solid #000000;
   padding: 0.6rem 0.85rem;
   display: flex;
   align-items: center;
@@ -454,8 +454,8 @@ const heatmapWeeks = computed(() => {
 
 .project-callout-card:hover,
 .project-callout-card.active-highlight {
-  border-color: #00e5ff;
-  background: #040c5a;
+  border-color: #0B1BC6;
+  background: #f1f5f9;
   box-shadow: 4px 4px 0px #00e5ff;
   transform: translateY(-2px);
 }
@@ -491,13 +491,13 @@ const heatmapWeeks = computed(() => {
 .callout-project-title {
   font-size: 0.82rem;
   font-weight: 500;
-  color: #ffffff;
+  color: #000000;
   letter-spacing: 0.01em;
 }
 
 .callout-project-sub {
   font-size: 0.7rem;
-  color: #93c5fd;
+  color: #475569;
   margin-top: 1px;
 }
 
