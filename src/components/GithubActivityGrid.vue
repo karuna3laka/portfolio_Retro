@@ -20,7 +20,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'saasbeds' }"
-            @mouseenter="activeProject = 'saasbeds'"
+            @mouseenter="logCardHover('saasbeds')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-blue">
@@ -41,7 +41,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'bewaxed' }"
-            @mouseenter="activeProject = 'bewaxed'"
+            @mouseenter="logCardHover('bewaxed')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-white">
@@ -60,7 +60,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'marketplace' }"
-            @mouseenter="activeProject = 'marketplace'"
+            @mouseenter="logCardHover('marketplace')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-blue">
@@ -77,8 +77,10 @@
         </div>
       </div>
 
-      <!-- MAIN GITLAB HEATMAP CARD -->
-      <div class="gitlab-card">
+      <!-- MIDDLE ROW: GITLAB HEATMAP CARD + RIGHT SIDE UNI PROJECTS -->
+      <div class="middle-chart-wrapper">
+        <!-- MAIN GITLAB HEATMAP CARD -->
+        <div class="gitlab-card">
         <!-- Month Labels Bar (Accurately Positioned over Exact Week Columns) -->
         <div class="months-bar">
           <span class="day-spacer"></span>
@@ -141,6 +143,82 @@
         </div>
       </div>
 
+      <!-- RIGHT SIDE OUTSIDE THE CHART: JUST ARROW > AND UNI PROJECTS LABEL -->
+      <div v-if="uniProjectsLoaded" class="chart-right-side" ref="triggerRef">
+        <div 
+          class="uni-arrow-trigger" 
+          :class="{ 'active-trigger': showUniChart, 'preloaded-glow': isProximityPreloaded }"
+          @click="showUniChart = !showUniChart"
+          title="Click to view University Projects chart"
+        >
+          <span class="big-pixel-arrow">></span>
+          <span class="uni-trigger-label">Uni Projects</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECOND CHART: UNIVERSITY PROJECTS HEATMAP (Toggled via > Uni Projects) -->
+    <div v-if="showUniChart" class="uni-chart-section">
+      <div class="uni-chart-header">
+        <h3 class="uni-chart-title">🎓 University Projects Activity</h3>
+        <span class="uni-chart-sub">Academic & Research Repositories</span>
+      </div>
+
+      <div class="gitlab-card uni-gitlab-card">
+        <!-- Month Labels Bar -->
+        <div class="months-bar">
+          <span class="day-spacer"></span>
+          <div class="months-labels-grid">
+            <span 
+              v-for="(m, i) in monthHeaderConfig" 
+              :key="i" 
+              class="month-item"
+              :style="{ gridColumnStart: m.col }"
+            >
+              {{ m.name }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Matrix Body -->
+        <div class="matrix-container">
+          <div class="day-labels-col">
+            <span class="day-code"></span>
+            <span class="day-code">M</span>
+            <span class="day-code"></span>
+            <span class="day-code">W</span>
+            <span class="day-code"></span>
+            <span class="day-code">F</span>
+            <span class="day-code"></span>
+          </div>
+
+          <div class="weeks-grid">
+            <div v-for="(week, wIdx) in uniHeatmapWeeks" :key="wIdx" class="week-column">
+              <div
+                v-for="(cell, dIndex) in week"
+                :key="dIndex"
+                class="heat-cell"
+                :class="`level-${cell.level}`"
+                :title="`${cell.formattedDate}: ${cell.count} Uni contributions`"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Footer Info -->
+        <div class="gitlab-footer">
+          <div class="legend-box">
+            <div class="heat-cell level-0"></div>
+            <div class="heat-cell level-1"></div>
+            <div class="heat-cell level-2"></div>
+            <div class="heat-cell level-3"></div>
+            <div class="heat-cell level-4"></div>
+          </div>
+          <span class="footer-caption">Academic coursework, research prototypes, and machine learning models.</span>
+        </div>
+      </div>
+    </div>
+
       <!-- BOTTOM CARDS ROW (3) -->
       <div class="callouts-row bottom-row">
         
@@ -149,7 +227,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'appointment' }"
-            @mouseenter="activeProject = 'appointment'"
+            @mouseenter="logCardHover('saptify')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-blue">
@@ -170,7 +248,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'veyogo' }"
-            @mouseenter="activeProject = 'veyogo'"
+            @mouseenter="logCardHover('autosale.lk')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-white">
@@ -189,7 +267,7 @@
           <div
             class="project-callout-card"
             :class="{ 'active-highlight': activeProject === 'houseofsincerity' }"
-            @mouseenter="activeProject = 'houseofsincerity'"
+            @mouseenter="logCardHover('HouseofSincerity')"
             @mouseleave="activeProject = null"
           >
             <div class="callout-chip chip-white">
@@ -209,9 +287,108 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const activeProject = ref(null);
+const uniProjectsLoaded = ref(false);
+const showUniChart = ref(false);
+
+// Proximity & Caching States
+const triggerRef = ref(null);
+const isProximityPreloaded = ref(false);
+const showProximityBadge = ref(false);
+const cursorPos = ref({ x: 0, y: 0 });
+
+const logCardHover = (projName) => {
+  activeProject.value = projName === 'saptify' ? 'appointment' : projName === 'autosale.lk' ? 'veyogo' : projName === 'HouseofSincerity' ? 'houseofsincerity' : projName;
+  window.dispatchEvent(new CustomEvent('preload-log', {
+    detail: `Proximity detected [${projName}] -> Preloaded & Cached`
+  }));
+};
+
+const handleMouseMove = (e) => {
+  cursorPos.value = { x: e.clientX, y: e.clientY };
+  if (!triggerRef.value || isProximityPreloaded.value) return;
+
+  const rect = triggerRef.value.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+
+  // Trigger preloading when cursor is within 220px of the button
+  if (distance < 220) {
+    isProximityPreloaded.value = true;
+    
+    window.dispatchEvent(new CustomEvent('preload-log', {
+      detail: `Proximity detected [Uni Projects] -> Preloaded & Cached`
+    }));
+
+    // Store in browser LocalStorage cache
+    localStorage.setItem('uni_projects_cache', JSON.stringify({
+      preloaded: true,
+      timestamp: new Date().toISOString()
+    }));
+  }
+};
+
+onMounted(() => {
+  // Check if already cached in browser
+  const cached = localStorage.getItem('uni_projects_cache');
+  if (cached) {
+    isProximityPreloaded.value = true;
+  }
+
+  // Deferred non-blocking activation
+  const loadUniData = () => {
+    uniProjectsLoaded.value = true;
+  };
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadUniData);
+  } else {
+    setTimeout(loadUniData, 300);
+  }
+
+  window.addEventListener('mousemove', handleMouseMove);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove);
+});
+
+// Second Heatmap Data Generator for University Projects
+const uniHeatmapWeeks = computed(() => {
+  const weeks = [];
+  const totalWeeks = 53;
+  let currDate = new Date(2024, 8, 1);
+
+  for (let w = 0; w < totalWeeks; w++) {
+    const days = [];
+    for (let d = 0; d < 7; d++) {
+      const formattedDate = currDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      let level = 0;
+      let count = 0;
+
+      if (d >= 1 && d <= 5) {
+        const r = Math.random();
+        if (r > 0.35) {
+          level = r > 0.85 ? 4 : r > 0.65 ? 3 : r > 0.45 ? 2 : 1;
+          count = level * 3;
+        }
+      }
+
+      days.push({ level, count, formattedDate });
+      currDate.setDate(currDate.getDate() + 1);
+    }
+    weeks.push(days);
+  }
+  return weeks;
+});
 
 // Exact Month start column offsets matching Sep 2025 - Sep 2026
 const monthHeaderConfig = [
@@ -646,5 +823,136 @@ const heatmapWeeks = computed(() => {
   font-size: 0.78rem;
   color: #000000;
   font-weight: 400;
+}
+
+/* Middle Chart Wrapper (Outside Right Side Trigger - Absolutely Positioned to avoid chart shrinkage) */
+.middle-chart-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.middle-chart-wrapper .gitlab-card {
+  width: 100%;
+}
+
+.chart-right-side {
+  position: absolute;
+  left: calc(100% + 1.25rem);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
+
+.uni-arrow-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 0.1rem;
+  user-select: none;
+  padding: 0.4rem 0.6rem;
+  transition: transform 0.15s ease;
+}
+
+.uni-arrow-trigger:hover {
+  transform: translateX(4px);
+}
+
+.uni-arrow-trigger.active-trigger .big-pixel-arrow {
+  color: #00e5ff;
+  transform: rotate(90deg);
+}
+
+.big-pixel-arrow {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  font-family: var(--font-mono);
+  transition: color 0.15s ease, transform 0.2s ease;
+}
+
+.uni-arrow-trigger:hover .big-pixel-arrow {
+  color: #00e5ff;
+}
+
+.uni-trigger-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+/* Second Uni Projects Chart Container */
+.uni-chart-section {
+  margin-top: 2rem;
+  width: 100%;
+  animation: fadeInChart 0.3s ease-in-out;
+}
+
+@keyframes fadeInChart {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.uni-chart-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.uni-chart-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00e5ff;
+}
+
+.uni-chart-sub {
+  font-size: 0.75rem;
+  color: #93c5fd;
+}
+
+.uni-gitlab-card {
+  border-color: #00e5ff;
+}
+
+/* Proximity Cursor Floating Indicator & Cache Tags */
+.cursor-floating-box {
+  position: fixed;
+  z-index: 9999;
+  background: #000000;
+  color: #00e5ff;
+  border: 1px solid #00e5ff;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  box-shadow: 2px 2px 0px #00e5ff;
+  pointer-events: none;
+  animation: pulseGlow 0.3s ease;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.preload-status-tag {
+  font-size: 0.6rem;
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid #00e5ff;
+  padding: 0.1rem 0.3rem;
+  margin-top: 0.2rem;
+  font-family: var(--font-mono);
+}
+
+.preloaded-glow .big-pixel-arrow {
+  text-shadow: 0 0 8px #00e5ff;
 }
 </style>
