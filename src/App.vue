@@ -5,6 +5,7 @@
       <HeroSection />
     </main>
     <Footer />
+    <SpotifyNowPlaying />
   </div>
 </template>
 
@@ -12,6 +13,7 @@
 import Navbar from './components/Navbar.vue';
 import HeroSection from './components/HeroSection.vue';
 import Footer from './components/Footer.vue';
+import SpotifyNowPlaying from './components/SpotifyNowPlaying.vue';
 </script>
 
 <style>
