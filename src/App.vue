@@ -5,7 +5,7 @@
       <HeroSection />
     </main>
     <Footer />
-    <!-- <SpotifyNowPlaying /> -->
+    <SpotifyNowPlaying />
   </div>
 </template>
 
